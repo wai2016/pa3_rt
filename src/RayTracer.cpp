@@ -19,19 +19,32 @@ extern TraceUI* traceUI;
 // in an initial ray weight of (0.0,0.0,0.0) and an initial recursion depth of 0.
 vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
-	bool depth = false;
+	bool depth = true;
 	vec3f col;
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
 	col = traceRay(scene, r, vec3f(1.0, 1.0, 1.0), 0).clamp();
 
-	// depth of field (thickness and focus length)
+	// depth of field 
 	if (depth)
 	{
+		// shoot 4 more rays towards focus => stupid hard coding
+		double focalLength = 3;
+		vec3f focus = r.at(focalLength); 
+		double radius = 0.1;
 		ray r1(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r2(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r3(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r4(vec3f(0, 0, 0), vec3f(0, 0, 0));
+		scene->getCamera()->rayThroughDOF(1, 0, r1, focus, radius);
+		scene->getCamera()->rayThroughDOF(-1, 0, r2, focus, radius);
+		scene->getCamera()->rayThroughDOF(0, 1, r3, focus, radius);
+		scene->getCamera()->rayThroughDOF(0, -1, r4, focus, radius);
+		col = col + traceRay(scene, r1, vec3f(1.0, 1.0, 1.0), 0).clamp() + traceRay(scene, r, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
+					traceRay(scene, r2, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
+					traceRay(scene, r3, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
+					traceRay(scene, r4, vec3f(1.0, 1.0, 1.0), 0).clamp();
+		col = col / 5.0;
 	}
 	return col;
 }
@@ -79,9 +92,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			vec3f stupidx = vec3f(0, 1, 0).cross(Rd).normalize();
 			vec3f stupidy = Rd.cross(stupidx).normalize();
 			mat4f T(vec4f(stupidx[0], stupidx[1], stupidx[2], p[0]),
-				vec4f(stupidy[0], stupidy[1], stupidy[2], p[1]),
-				vec4f(Rd[0], Rd[1], Rd[2], p[2]),
-				vec4f(0, 0, 0, 1));
+					vec4f(stupidy[0], stupidy[1], stupidy[2], p[1]),
+					vec4f(Rd[0], Rd[1], Rd[2], p[2]),
+					vec4f(0, 0, 0, 1)); // transform to Rd
 			R1 = R1 * T;
 			R2 = R2 * T;
 			R3 = R3 * T;
