@@ -25,13 +25,17 @@ Camera::rayThrough( double x, double y, ray &r )
     r = ray( eye, dir.normalize() );
 }
 
-void Camera::rayThroughDOF(double x, double y, ray &r, vec3f f, double radius)
+void Camera::rayThroughDOF(double x, double y, double a, double b, ray &r, double f, double radius)
 {
+	x -= 0.5;
+	y -= 0.5;
+	vec3f dir = look + x * u + y * v;
+	vec3f focusPoint = eye + f * dir;
 	vec3f xRadius = u.normalize() * radius;
 	vec3f yRadius = v.normalize() * radius;
-	vec3f newEye = eye + x * xRadius + y * yRadius;
-	vec3f dir = (f - newEye).normalize();
-	r = ray(newEye, dir.normalize());
+	vec3f newEye = eye + a * xRadius + b * yRadius;
+	vec3f newDir = focusPoint - newEye;
+	r = ray(newEye, newDir.normalize());
 }
 
 void

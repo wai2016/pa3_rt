@@ -29,18 +29,17 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 	if (depth)
 	{
 		// shoot 4 more rays towards focus => stupid hard coding
-		double focalLength = 3;
-		vec3f focus = r.at(focalLength); 
+		double focalLength = 5; 
 		double radius = 0.1;
 		ray r1(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r2(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r3(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r4(vec3f(0, 0, 0), vec3f(0, 0, 0));
-		scene->getCamera()->rayThroughDOF(1, 0, r1, focus, radius);
-		scene->getCamera()->rayThroughDOF(-1, 0, r2, focus, radius);
-		scene->getCamera()->rayThroughDOF(0, 1, r3, focus, radius);
-		scene->getCamera()->rayThroughDOF(0, -1, r4, focus, radius);
-		col = col + traceRay(scene, r1, vec3f(1.0, 1.0, 1.0), 0).clamp() + traceRay(scene, r, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
+		scene->getCamera()->rayThroughDOF(x, y, 1, 0, r1, focalLength, radius);
+		scene->getCamera()->rayThroughDOF(x, y, -1, 0, r2, focalLength, radius);
+		scene->getCamera()->rayThroughDOF(x, y, 0, 1, r3, focalLength, radius);
+		scene->getCamera()->rayThroughDOF(x, y, 0, -1, r4, focalLength, radius);
+		col = col + traceRay(scene, r1, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
 					traceRay(scene, r2, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
 					traceRay(scene, r3, vec3f(1.0, 1.0, 1.0), 0).clamp() + 
 					traceRay(scene, r4, vec3f(1.0, 1.0, 1.0), 0).clamp();
