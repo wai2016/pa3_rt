@@ -19,7 +19,7 @@ extern TraceUI* traceUI;
 // in an initial ray weight of (0.0,0.0,0.0) and an initial recursion depth of 0.
 vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
-	bool depth = true;
+	bool depth = traceUI->getDOF();
 	vec3f col;
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
@@ -29,8 +29,8 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 	if (depth)
 	{
 		// shoot 4 more rays towards focus => stupid hard coding
-		double focalLength = 5; 
-		double radius = 0.1;
+		double focalLength = traceUI->getFocalLength(); 
+		double radius = 0.1; // user input later?
 		ray r1(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r2(vec3f(0, 0, 0), vec3f(0, 0, 0));
 		ray r3(vec3f(0, 0, 0), vec3f(0, 0, 0));

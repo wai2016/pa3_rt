@@ -102,6 +102,11 @@ void TraceUI::cb_antialiasingRangeSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nAntialiasingRange = int(((Fl_Slider *)o)->value());
 }
 
+void TraceUI::cb_DOFSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nFocalLength = int(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_antialiasing(Fl_Widget* o, void* v)
 {
 	TraceUI *pUI = ((TraceUI*)(o->user_data()));
@@ -124,6 +129,14 @@ void TraceUI::cb_glossyReflection(Fl_Widget* o, void* v)
 
 	if (pUI->m_nGlossyReflection == TRUE) pUI->m_nGlossyReflection = FALSE;
 	else pUI->m_nGlossyReflection = TRUE;
+}
+
+void TraceUI::cb_DOF(Fl_Widget* o, void* v)
+{
+	TraceUI *pUI = ((TraceUI*)(o->user_data()));
+
+	if (pUI->m_nDOF == TRUE) pUI->m_nDOF = FALSE;
+	else pUI->m_nDOF = TRUE;
 }
 
 void TraceUI::cb_render(Fl_Widget* o, void* v)
@@ -254,6 +267,16 @@ int TraceUI::getGlossyReflection()
 	return m_nGlossyReflection;
 }
 
+int TraceUI::getDOF()
+{
+	return m_nDOF;
+}
+
+int TraceUI::getFocalLength()
+{
+	return m_nFocalLength;
+}
+
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -278,6 +301,8 @@ TraceUI::TraceUI() {
 	m_nAntialiasingRange = 1;
 	m_nJittering = 0;
 	m_nGlossyReflection = 0;
+	m_nDOF = 0;
+	m_nFocalLength = 1;
 
 	m_mainWindow = new Fl_Window(100, 40, 350, 200, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
@@ -356,6 +381,22 @@ TraceUI::TraceUI() {
 		m_glossyReflectionButton = new Fl_Light_Button(240, 157, 100, 25, "&Glossy R");
 		m_glossyReflectionButton->user_data((void*)(this));
 		m_glossyReflectionButton->callback(cb_glossyReflection);
+
+		m_DOFSlider = new Fl_Value_Slider(10, 182, 180, 20, "Focal Length");
+		m_DOFSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_DOFSlider->type(FL_HOR_NICE_SLIDER);
+		m_DOFSlider->labelfont(FL_COURIER);
+		m_DOFSlider->labelsize(12);
+		m_DOFSlider->minimum(1);
+		m_DOFSlider->maximum(10);
+		m_DOFSlider->step(1);
+		m_DOFSlider->value(m_nFocalLength);
+		m_DOFSlider->align(FL_ALIGN_RIGHT);
+		m_DOFSlider->callback(cb_DOFSlides);
+
+		m_DOFButton = new Fl_Light_Button(240, 185, 100, 25, "&DOF");
+		m_DOFButton->user_data((void*)(this));
+		m_DOFButton->callback(cb_DOF);
 
 		m_mainWindow->callback(cb_exit2);
 		m_mainWindow->when(FL_HIDE);

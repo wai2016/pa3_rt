@@ -30,6 +30,7 @@ public:
 	Fl_Slider*			m_depthSlider;
 	Fl_Slider*			m_ambientSlider;
 	Fl_Slider*			m_antialiasingRangeSlider;
+	Fl_Slider*			m_DOFSlider;
 
 	Fl_Button*			m_renderButton;
 	Fl_Button*			m_stopButton;
@@ -37,6 +38,7 @@ public:
 	Fl_Light_Button*	m_antialiasingButton;
 	Fl_Light_Button*	m_jitteringButton;
 	Fl_Light_Button*	m_glossyReflectionButton;
+	Fl_Light_Button*	m_DOFButton;
 
 	TraceGLWindow*		m_traceGlWindow;
 
@@ -52,6 +54,8 @@ public:
 	int			getAntialiasingRange();
 	int			getJittering();
 	int			getGlossyReflection();
+	int			getDOF();
+	int			getFocalLength();
 
 private:
 	RayTracer*	raytracer;
@@ -63,6 +67,8 @@ private:
 	int			m_nAntialiasingRange;
 	int			m_nJittering;
 	int			m_nGlossyReflection;
+	int			m_nDOF;
+	int			m_nFocalLength;
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -80,10 +86,12 @@ private:
 	static void cb_depthSlides(Fl_Widget* o, void* v);
 	static void cb_ambientSlides(Fl_Widget* o, void* v);
 	static void cb_antialiasingRangeSlides(Fl_Widget* o, void* v);
+	static void cb_DOFSlides(Fl_Widget* o, void* v);
 
 	static void cb_antialiasing(Fl_Widget* o, void* v);
 	static void cb_jittering(Fl_Widget* o, void* v);
 	static void cb_glossyReflection(Fl_Widget* o, void* v);
+	static void cb_DOF(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);
