@@ -1,6 +1,7 @@
 ﻿  RayTracer.cpp
 c:\users\uer\desktop\project3\pa3_rt\src\fileio/parse.h(180): warning C4018: '<': signed/unsigned 不相符
 src\RayTracer.cpp(22): warning C4800: 'int': 強制將 bool 的值定為 'true' 或 'false' (效能警告)
+  Cylinder.cpp
   read.cpp
 c:\users\uer\desktop\project3\pa3_rt\src\fileio\parse.h(180): warning C4018: '<': signed/unsigned 不相符
   light.cpp
