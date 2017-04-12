@@ -580,6 +580,30 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 				0.0
 			)); // assume coeffs must exist together
 	}
+	else if (name == "area_light") {
+		if (child == NULL) {
+			throw ParseError("No info for area_light");
+		}
+
+		if (hasField(child, "constant_attenuation_coeff") && hasField(child, "linear_attenuation_coeff") && hasField(child, "quadratic_attenuation_coeff"))
+			scene->add(new AreaLight(scene,
+				tupleToVec(getField(child, "position")),
+				tupleToVec(getColorField(child)),
+				getField(child, "constant_attenuation_coeff")->getScalar(),
+				getField(child, "linear_attenuation_coeff")->getScalar(),
+				getField(child, "quadratic_attenuation_coeff")->getScalar(),
+				tupleToVec(getField(child, "up"))
+			));
+		else
+			scene->add(new AreaLight(scene,
+				tupleToVec(getField(child, "position")),
+				tupleToVec(getColorField(child)),
+				0.0,
+				0.0,
+				0.0,
+				tupleToVec(getField(child, "up"))
+			)); // assume coeffs must exist together
+	}
 	else if (name == "sphere" ||
 				name == "box" ||
 				name == "cylinder" ||

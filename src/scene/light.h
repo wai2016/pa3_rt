@@ -78,4 +78,21 @@ protected:
 	double angle; // coneAngle
 	double cac, lac, qac; // constant_attenuation_coeff, linear_attenuation_coeff, quadratic_attenuation_coeff
 };
+
+class AreaLight
+	: public Light
+{
+public:
+	AreaLight(Scene *scene, const vec3f& pos, const vec3f& color, const double& cac, const double& lac, const double& qac, const vec3f& up)
+		: Light(scene, color), position(pos), cac(cac), lac(lac), qac(qac), up(up), pl1(scene, pos - up, color, cac, lac, qac), pl2(scene, pos, color, cac, lac, qac), pl3(scene, pos + up, color, cac, lac, qac) {}
+	virtual vec3f shadowAttenuation(const vec3f& P) const;
+	virtual double distanceAttenuation(const vec3f& P) const;
+	virtual vec3f getColor(const vec3f& P) const;
+	virtual vec3f getDirection(const vec3f& P) const;
+
+protected:
+	vec3f position, up;
+	double cac, lac, qac; // constant_attenuation_coeff, linear_attenuation_coeff, quadratic_attenuation_coeff
+	PointLight pl1, pl2, pl3;
+};
 #endif // __LIGHT_H__

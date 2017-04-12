@@ -205,3 +205,34 @@ vec3f SpotLight::shadowAttenuation(const vec3f& P) const
 
 	return sa;
 }
+
+double AreaLight::distanceAttenuation(const vec3f& P) const
+{
+	// YOUR CODE HERE
+
+	// You'll need to modify this method to attenuate the intensity 
+	// of the light based on the distance between the source and the 
+	// point P.  
+
+	return (pl1.distanceAttenuation(P) + pl2.distanceAttenuation(P) + pl3.distanceAttenuation(P)) / 3;
+}
+
+vec3f AreaLight::getColor(const vec3f& P) const
+{
+	// Color doesn't depend on P 
+	return color;
+}
+
+vec3f AreaLight::getDirection(const vec3f& P) const
+{
+	return (position - P).normalize();
+}
+
+
+vec3f AreaLight::shadowAttenuation(const vec3f& P) const
+{
+	// YOUR CODE HERE:
+	// You should implement shadow-handling code here.
+
+	return (pl1.shadowAttenuation(P) + pl2.shadowAttenuation(P) + pl3.shadowAttenuation(P)) / 3;
+}
