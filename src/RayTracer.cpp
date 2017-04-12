@@ -122,14 +122,14 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		vec3f Tn;
 		if (vd.dot(i.N) >= 0.0) // ray is entering object
 		{
-			n_i = 1.0002772; // refraction index of air
+			n_i = 1.0; // refraction index of air
 			n_t = m.index;
 			Tn = i.N;
 		}
 		else 
 		{
 			n_i = m.index;
-			n_t = 1.0002772; // refraction index of air
+			n_t = 1.0; // refraction index of air
 			Tn = -i.N;
 		}
 		double n = n_i / n_t;

@@ -14,24 +14,22 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
 
-	vec3f sa;
+	vec3f sa = vec3f(1, 1, 1); // assume not block the light
 	vec3f d = getDirection(P);
 	ray r(P, d);
 	isect i;
+	ray nr = r;
 
-	if (scene->intersect(r, i)) // check this is already ok for directional light because it is from infinity
+	while (scene->intersect(nr, i)) // no need care about the light position
 	{
 		const Material& m = i.getMaterial();
-		//vec3f transparent; // don't know correct or not
-		//transparent[0] = m.kt[0] * color[0];
-		//transparent[1] = m.kt[1] * color[1];
-		//transparent[2] = m.kt[2] * color[2];
-		//sa = vec3f(0, 0, 0) + transparent; // don't know correct or not 
-		sa = vec3f(0, 0, 0);
+		if (m.kt.iszero())
+			return vec3f(0, 0, 0); // block the light
+		sa = prod(m.kt, color);
+		nr = ray(nr.at(i.t), d); // produce new ray if the object is transparent
+		if (i.t < RAY_EPSILON) // check if error occurs
+			nr = ray(nr.at(i.t), d);
 	}
-	else
-		sa = vec3f(1, 1, 1);
-
 	return sa;
 }
 
@@ -79,36 +77,35 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
 
-	vec3f sa;
+	vec3f sa = vec3f(1, 1, 1); // assume not block the light
 	vec3f d = getDirection(P);
 	ray r(P, d);
 	isect i;
+	ray nr = r;
 
-	if (scene->intersect(r, i)) // just check this is not enough for point light because it has position
+	while (scene->intersect(nr, i)) // just check this is not enough for point light because it has position
 	{
 		// use distance to check whether the light source is in the front or not
 		double d1 = sqrt((position[0] - P[0]) * (position[0] - P[0]) +
 						 (position[1] - P[1]) * (position[1] - P[1]) +
 						 (position[2] - P[2]) * (position[2] - P[2])); // sqrt(x^2 + y^2 + z^2)
-		double d2 = sqrt((r.at(i.t)[0] - P[0]) * (r.at(i.t)[0] - P[0]) +
-						 (r.at(i.t)[1] - P[1]) * (r.at(i.t)[1] - P[1]) +
-						 (r.at(i.t)[2] - P[2]) * (r.at(i.t)[2] - P[2])); // sqrt(x^2 + y^2 + z^2)
+		double d2 = sqrt((nr.at(i.t)[0] - P[0]) * (nr.at(i.t)[0] - P[0]) +
+						 (nr.at(i.t)[1] - P[1]) * (nr.at(i.t)[1] - P[1]) +
+						 (nr.at(i.t)[2] - P[2]) * (nr.at(i.t)[2] - P[2])); // sqrt(x^2 + y^2 + z^2)
 		if (d1 < d2) // check whether the light source is in the front or not
-			sa = vec3f(1, 1, 1); // light source in the front
+			break; // light source in the front
 		else
 		{
-			//const Material& m = i.getMaterial();
-			//vec3f transparent; // don't know correct or not
-			//transparent[0] = m.kt[0] * color[0];
-			//transparent[1] = m.kt[1] * color[1];
-			//transparent[2] = m.kt[2] * color[2];
-			//sa = vec3f(0, 0, 0) + transparent; // don't know correct or not
-			sa = vec3f(0, 0, 0);
+			const Material& m = i.getMaterial();
+			if (m.kt.iszero())
+				return vec3f(0, 0, 0); // block the light
+			sa = prod(m.kt, color);
+			nr = ray(nr.at(i.t), d); // produce new ray if the object is transparent
+			if (i.t < RAY_EPSILON) // check if error occurs
+				nr = ray(nr.at(i.t), d);
 		}
+		
 	}
-	else
-		sa = vec3f(1, 1, 1);
-
     return sa;
 }
 
