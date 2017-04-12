@@ -20,10 +20,11 @@ extern TraceUI* traceUI;
 vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
 	bool depth = traceUI->getDOF();
+	double thresh = traceUI->getAT();
 	vec3f col;
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	col = traceRay(scene, r, vec3f(1.0, 1.0, 1.0), 0).clamp();
+	col = traceRay(scene, r, vec3f(thresh, thresh, thresh), 0).clamp();
 
 	// depth of field 
 	if (depth)
@@ -72,6 +73,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		const Material& m = i.getMaterial();
 		vec3f I = m.shade(scene, r, i);
+
+		if (I[0] < thresh[0] && I[1] < thresh[1] && I[2] < thresh[2] && depth > 0) // adaptive termination
+			return vec3f(0.0, 0.0, 0.0);
 
 		// reflection
 		vec3f p = r.at(i.t); // position of the intersect point

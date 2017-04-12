@@ -107,6 +107,11 @@ void TraceUI::cb_DOFSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nFocalLength = int(((Fl_Slider *)o)->value());
 }
 
+void TraceUI::cb_ATSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nAT = double(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_antialiasing(Fl_Widget* o, void* v)
 {
 	TraceUI *pUI = ((TraceUI*)(o->user_data()));
@@ -277,6 +282,11 @@ int TraceUI::getFocalLength()
 	return m_nFocalLength;
 }
 
+double TraceUI::getAT()
+{
+	return m_nAT;
+}
+
 // menu definition
 Fl_Menu_Item TraceUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -303,8 +313,9 @@ TraceUI::TraceUI() {
 	m_nGlossyReflection = 0;
 	m_nDOF = 0;
 	m_nFocalLength = 1;
+	m_nAT = 0.0;
 
-	m_mainWindow = new Fl_Window(100, 40, 350, 200, "Ray <Not Loaded>");
+	m_mainWindow = new Fl_Window(100, 40, 350, 300, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 350, 25);
@@ -382,7 +393,7 @@ TraceUI::TraceUI() {
 		m_glossyReflectionButton->user_data((void*)(this));
 		m_glossyReflectionButton->callback(cb_glossyReflection);
 
-		m_DOFSlider = new Fl_Value_Slider(10, 182, 180, 20, "Focal Length");
+		m_DOFSlider = new Fl_Value_Slider(10, 182, 180, 20, "Focal");
 		m_DOFSlider->user_data((void*)(this));	// record self to be used by static callback functions
 		m_DOFSlider->type(FL_HOR_NICE_SLIDER);
 		m_DOFSlider->labelfont(FL_COURIER);
@@ -393,6 +404,18 @@ TraceUI::TraceUI() {
 		m_DOFSlider->value(m_nFocalLength);
 		m_DOFSlider->align(FL_ALIGN_RIGHT);
 		m_DOFSlider->callback(cb_DOFSlides);
+
+		m_ATSlider = new Fl_Value_Slider(10, 210, 180, 20, "Adaptive Termination");
+		m_ATSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ATSlider->type(FL_HOR_NICE_SLIDER);
+		m_ATSlider->labelfont(FL_COURIER);
+		m_ATSlider->labelsize(12);
+		m_ATSlider->minimum(0);
+		m_ATSlider->maximum(1);
+		m_ATSlider->step(0.01);
+		m_ATSlider->value(m_nAT);
+		m_ATSlider->align(FL_ALIGN_RIGHT);
+		m_ATSlider->callback(cb_ATSlides);
 
 		m_DOFButton = new Fl_Light_Button(240, 185, 100, 25, "&DOF");
 		m_DOFButton->user_data((void*)(this));
