@@ -26,6 +26,10 @@ public:
 
 	bool sceneLoaded();
 
+	void loadBackground(char* image);
+	void clearBackground();
+	vec3f getBackgroundImage(double u, double v);
+
 private:
 	unsigned char *buffer;
 	int buffer_width, buffer_height;
@@ -33,6 +37,10 @@ private:
 	Scene *scene;
 
 	bool m_bSceneLoaded;
+
+	int background_height, background_width;
+	bool Background;
+	unsigned char *backgroundImage;
 };
 
 #endif // __RAYTRACER_H__

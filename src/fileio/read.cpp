@@ -11,6 +11,7 @@
 
 #include "read.h"
 #include "parse.h"
+#include "bitmap.h"
 
 #include "../scene/scene.h"
 #include "../SceneObjects/trimesh.h"
@@ -430,14 +431,7 @@ static Material *processMaterial( Obj *child, mmap *bindings )
         mat->ks = tupleToVec( getField( child, "specular" ) );
     }
     if( hasField( child, "diffuse" ) ) {
-		Obj* map = getField(child, "diffuse");
-		if (map->getTypeName() == "tuple")
-			mat->kd = tupleToVec( getField( child, "diffuse" ) );
-		else // texture mapping
-		{
-			mytuple tuple = map->getChild()->getTuple();
-			string file = tuple[0]->getString();
-		}
+		mat->kd = tupleToVec( getField( child, "diffuse" ) );
     }
     if( hasField( child, "reflective" ) ) {
         mat->kr = tupleToVec( getField( child, "reflective" ) );
@@ -453,6 +447,29 @@ static Material *processMaterial( Obj *child, mmap *bindings )
     if( hasField( child, "shininess" ) ) {
         mat->shininess = getField( child, "shininess" )->getScalar();
     }
+	if (hasField(child, "texture")) {
+		string str_texture = getField(child, "texture")->getString();
+		char *char_texture = new char[str_texture.length()];
+		strcpy(char_texture, str_texture.c_str());
+		int texture_width, texture_height;
+		unsigned char* texture = readBMP(char_texture, texture_width, texture_height);
+		if (texture)
+		{
+			if (mat->texture != NULL)
+			{
+				delete[] mat->texture;
+			}
+			mat->texture = texture;
+			mat->texture_width = texture_width;
+			mat->texture_height = texture_height;
+
+		}
+		else
+		{
+			printf("Failed loading texture bitmap %s.\n", char_texture);
+		}
+		delete[] char_texture;
+	}
 
     if( bindings != NULL ) {
         // Want to bind, better have "name" field:

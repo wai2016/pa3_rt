@@ -11,6 +11,8 @@
 
 #include "ui/TraceUI.h"
 
+#include "fileio/bitmap.h"
+
 extern TraceUI* traceUI;
 
 // Trace a top-level ray through normalized window coordinates (x,y)
@@ -153,7 +155,20 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// it according to the background color, which in this (simple) case
 		// is just black.
 
-		return vec3f( 0.0, 0.0, 0.0 );
+		if (Background)
+		{
+			vec3f x = scene->getCamera()->getU();
+			vec3f y = scene->getCamera()->getV();
+			vec3f z = scene->getCamera()->getLook();
+			double dx = r.getDirection().dot(x);
+			double dy = r.getDirection().dot(y);
+			double dz = r.getDirection().dot(z);
+			return getBackgroundImage(dx / dz + 0.5, dy / dz + 0.5);
+		}
+		else
+		{
+			return vec3f(0.0, 0.0, 0.0);
+		}
 	}
 }
 
@@ -164,6 +179,11 @@ RayTracer::RayTracer()
 	scene = NULL;
 
 	m_bSceneLoaded = false;
+
+	backgroundImage = NULL;
+	Background = false;
+	background_height = 0;
+	background_width = 0;
 }
 
 
@@ -171,6 +191,10 @@ RayTracer::~RayTracer()
 {
 	delete [] buffer;
 	delete scene;
+
+	if (backgroundImage) {
+		delete[] backgroundImage;
+	}
 }
 
 void RayTracer::getBuffer( unsigned char *&buf, int &w, int &h )
@@ -312,4 +336,43 @@ void RayTracer::tracePixel(int i, int j)
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
 
+}
+
+void RayTracer::loadBackground(char* image)
+{
+	unsigned char* bmp = NULL;
+	bmp = readBMP(image, background_width, background_height);
+	if (bmp) {
+		if (backgroundImage) {
+			delete[] backgroundImage;
+		}
+		Background = true;
+
+		backgroundImage = bmp;
+	}
+}
+
+void RayTracer::clearBackground() {
+	if (backgroundImage) {
+		delete[] backgroundImage;
+	}
+	backgroundImage = NULL;
+	Background = false;
+	background_height = 0;
+	background_width = 0;
+}
+
+vec3f RayTracer::getBackgroundImage(double u, double v) {
+	if (!Background) {
+		return vec3f(0, 0, 0);
+	}
+	int x = int(u*background_width);
+	int y = int(v*background_height);
+	if (x < 0 || x >= background_width || y < 0 || y >= background_height) {
+		return vec3f(0, 0, 0);
+	}
+	double r = backgroundImage[(y * background_width + x) * 3] / 255.0;
+	double g = backgroundImage[(y * background_width + x) * 3 + 1] / 255.0;
+	double b = backgroundImage[(y * background_width + x) * 3 + 2] / 255.0;
+	return vec3f(r, g, b);
 }

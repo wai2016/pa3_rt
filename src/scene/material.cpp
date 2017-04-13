@@ -74,9 +74,24 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 			// diffuse and specular
 			vec3f dns;
-			dns[0] = nl * m.kd[0] * (1 - m.kt[0]) + vr * m.ks[0];
-			dns[1] = nl * m.kd[1] * (1 - m.kt[1]) + vr * m.ks[1];
-			dns[2] = nl * m.kd[2] * (1 - m.kt[2]) + vr * m.ks[2];
+			if (i.obj->allow2Dmap3D() && texture != NULL) {
+				int x = 0;
+				int y = 0;
+				i.obj->do2Dmap3D(r, i, x, y);
+				x = x % texture_width;
+				y = y % texture_height;
+				double red = texture[(y * texture_width + x) * 3] / 255.0;
+				double green = texture[(y * texture_width + x) * 3 + 1] / 255.0;
+				double blue = texture[(y * texture_width + x) * 3 + 2] / 255.0;
+				dns[0] = nl * red * (1 - m.kt[0]) + vr * m.ks[0];
+				dns[1] = nl * green * (1 - m.kt[1]) + vr * m.ks[1];
+				dns[2] = nl * blue * (1 - m.kt[2]) + vr * m.ks[2];
+			}
+			else {
+				dns[0] = nl * m.kd[0] * (1 - m.kt[0]) + vr * m.ks[0];
+				dns[1] = nl * m.kd[1] * (1 - m.kt[1]) + vr * m.ks[1];
+				dns[2] = nl * m.kd[2] * (1 - m.kt[2]) + vr * m.ks[2];
+			}
 
 			temp[0] = dns[0] * temp[0];
 			temp[1] = dns[1] * temp[1];

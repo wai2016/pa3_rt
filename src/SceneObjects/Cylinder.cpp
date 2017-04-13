@@ -2,6 +2,10 @@
 
 #include "Cylinder.h"
 
+#ifdef WIN32
+#define M_PI	3.1415926535F
+#endif
+
 bool Cylinder::intersectLocal( const ray& r, isect& i ) const
 {
 	i.obj = this;
@@ -144,4 +148,19 @@ bool Cylinder::intersectCaps( const ray& r, isect& i ) const
 	}
 
 	return false;
+}
+
+void Cylinder::do2Dmap3D(const ray& r, const isect& i, int& x, int& y) const {
+	vec3f ip = transform->globalToLocalCoords(r.at(i.t));
+	double a;
+	if (ip[0] > 0) {
+		a = asin(ip[1]);
+		if (a < 0)
+			a += 2 * M_PI;
+	}
+	else {
+		a = M_PI - asin(ip[1]);
+	}
+	x = a / (2 * M_PI) * material->texture_width;
+	y = ip[2] * material->texture_height;
 }

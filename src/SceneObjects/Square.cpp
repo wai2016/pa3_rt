@@ -37,3 +37,9 @@ bool Square::intersectLocal( const ray& r, isect& i ) const
 
 	return true;
 }
+
+void Square::do2Dmap3D(const ray& r, const isect& i, int& x, int& y) const {
+	vec3f ip = transform->globalToLocalCoords(r.at(i.t));
+	x = (1 - (ip[0] + 0.5)) * material->texture_width;
+	y = (ip[1] + 0.5) * material->texture_height;
+}

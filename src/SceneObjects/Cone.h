@@ -36,6 +36,8 @@ public:
 	bool intersectBody( const ray& r, isect& i ) const;
 	bool intersectCaps( const ray& r, isect& i ) const;
 
+	virtual void do2Dmap3D(const ray& r, const isect& i, int& x, int& y) const;
+	virtual bool allow2Dmap3D() const { return true; }
 
 protected:
 	void computeABC()

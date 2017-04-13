@@ -92,3 +92,19 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	return true;
 }
+
+void Box::do2Dmap3D(const ray& r, const isect& i, int& x, int& y) const {
+	vec3f ip = transform->globalToLocalCoords(r.at(i.t));
+	if (0.5 - abs(ip[0]) < RAY_EPSILON) {
+		x = (ip[1] + 0.5) * material->texture_width;
+		y = (ip[2] + 0.5) * material->texture_height;
+	}
+	else if (0.5 - abs(ip[1]) < RAY_EPSILON) {
+		x = (ip[0] + 0.5) * material->texture_width;
+		y = (ip[2] + 0.5) * material->texture_height;
+	}
+	else if (0.5 - abs(ip[2]) < RAY_EPSILON) {
+		x = (ip[0] + 0.5) * material->texture_width;
+		y = (ip[1] + 0.5) * material->texture_height;
+	}
+}
