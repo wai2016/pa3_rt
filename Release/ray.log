@@ -1,4 +1,5 @@
-﻿  Cone.cpp
+﻿  read.cpp
+c:\users\uer\desktop\project3\pa3_rt\src\fileio\parse.h(180): warning C4018: '<': signed/unsigned 不相符
 fltk.lib(case.obj) : warning LNK4204: 'C:\Users\uer\Desktop\project3\pa3_rt\Release\vc140.pdb' 遺漏參考模組的偵錯資訊，當做沒有偵錯資訊，連結物件
 fltk.lib(filename_absolute.obj) : warning LNK4204: 'C:\Users\uer\Desktop\project3\pa3_rt\Release\vc140.pdb' 遺漏參考模組的偵錯資訊，當做沒有偵錯資訊，連結物件
 fltk.lib(filename_expand.obj) : warning LNK4204: 'C:\Users\uer\Desktop\project3\pa3_rt\Release\vc140.pdb' 遺漏參考模組的偵錯資訊，當做沒有偵錯資訊，連結物件
