@@ -123,6 +123,8 @@ bool Cylinder::intersectCaps( const ray& r, isect& i ) const
 			} else {
 				i.N = vec3f( 0.0, 0.0, 1.0 );
 			}
+			if (i.N * r.getDirection() > 0)
+				i.N = -i.N;
 			return true;
 		}
 	}
@@ -132,12 +134,12 @@ bool Cylinder::intersectCaps( const ray& r, isect& i ) const
 		i.t = t2;
 		if( dz > 0.0 ) {
 			// Intersection with cap at z = 1.
-			//i.N = vec3f( 0.0, 0.0, 1.0 );
-			i.N = vec3f(0.0, 0.0, -1.0);
+			i.N = vec3f( 0.0, 0.0, 1.0 );
 		} else {
-			//i.N = vec3f( 0.0, 0.0, -1.0 );
-			i.N = vec3f(0.0, 0.0, 1.0);
+			i.N = vec3f( 0.0, 0.0, -1.0 );
 		}
+		if (i.N * r.getDirection() > 0)
+			i.N = -i.N;
 		return true;
 	}
 

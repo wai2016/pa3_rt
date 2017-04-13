@@ -71,8 +71,8 @@ bool Cone::intersectBody( const ray& r, isect& i ) const
 		// Essentially, the cone in this case is a double-sided surface
 		// and has _2_ normals
 	
-		if( !capped && (i.N).dot( r.getDirection() ) > 0 )
-				i.N = -i.N;
+		//if( !capped && (i.N).dot( r.getDirection() ) > 0 ) // ??????????????
+		//		i.N = -i.N;
 
         return true;
 	}
